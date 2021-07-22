@@ -29,11 +29,17 @@ export default async (req, res) => {
         return
     }
 
+    // not very sophisticated
+    var link
     let u = req.query.u
     let q = encodeURIComponent(req.query.q)
-    let v = encodeURIComponent(req.query.v)
-    let link = `${u}&query=${q}&variables=${v}`
-
+    if (req.query.v.trim().length > 0) {
+        let v = encodeURIComponent(req.query.v)
+        link = `${u}&query=${q}&variables=${v}`    
+    } else {
+        link = `${u}&query=${q}`
+    }
+    
     let query = gql`
     {
         createShortLink(

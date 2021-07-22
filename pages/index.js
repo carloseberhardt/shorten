@@ -24,7 +24,7 @@ function Form() {
       <label htmlFor="Query">Query</label>
       <textarea style={{height: '180px', width: '400px', margin: '6px'}} id="Query" type="text" autoComplete="Query" required /><br/>
       <label htmlFor="Variables">Variables</label>
-      <textarea style={{height: '80px', width: '400px', margin: '6px'}} id="Variables" type="text" autoComplete="Variables" required /><br/>
+      <textarea style={{height: '80px', width: '400px', margin: '6px'}} id="Variables" type="text" autoComplete="Variables" /><br/>
       <br/><button type="submit">Shorten</button>
     </form></p>
   )
