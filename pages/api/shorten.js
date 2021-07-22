@@ -1,13 +1,35 @@
-import { GraphQLClient, gql } from 'graphql-request'
-
+const fetch = require('node-fetch')
 const { STEPZEN_URL, STEPZEN_KEY, API_KEY } = process.env
 const REFERERS=["https://shorten.c3b.dev/", "http://localhost:3000/"]
 
-const graphQLClient = new GraphQLClient(STEPZEN_URL, {
-    headers: {
-        authorization: `Apikey ${STEPZEN_KEY}`
-    }
-})
+async function shortenit(link) {
+    const data = JSON.stringify({
+        query: `mutation MyMutation {
+            createShortLink(
+              apiKey: "${API_KEY}"
+              domainUriPrefix: "https://sztry.page.link"
+              link: "${link}"
+              suffixOption: "SHORT"
+          ) {
+              shortLink
+          }
+        }`
+    }) 
+    
+    const response = await fetch(STEPZEN_URL, {
+        method: 'POST',
+        body: data,
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': data.length,
+            Authorization: `Apikey ${STEPZEN_KEY}`,
+            'User-Agent': 'foolish-carlos'
+        },
+    })
+
+    const json = await response.json()
+    return json
+}
 
 export default async (req, res) => {
     // check sec-fetch-site header for same-origin
@@ -39,28 +61,14 @@ export default async (req, res) => {
     } else {
         link = `${u}&query=${q}`
     }
-    
-    let mutation = gql`
-    {
-        mutation createShortLink(
-            apiKey: "${API_KEY}"
-            domainUriPrefix: "https://sztry.page.link"
-            link: "${link}"
-            suffixOption: "SHORT"
-        ) {
-            shortLink
-        }
-    }
-    `
-    
     try {
-        const data = await graphQLClient.rawRequest(mutation)
+        const data = await shortenit(link)
         console.log(JSON.stringify(data))
         res.statusCode = 200
         res.json(data.data)
     } catch (error) {
         console.error("error:", error)
         res.statusCode = 500
-        res.send("Server Error")
-    }
+        res.send("Server Error:", error)
+    }    
 }
