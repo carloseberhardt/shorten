@@ -40,9 +40,9 @@ export default async (req, res) => {
         link = `${u}&query=${q}`
     }
     
-    let query = gql`
+    let mutation = gql`
     {
-        createShortLink(
+        mutation createShortLink(
             apiKey: "${API_KEY}"
             domainUriPrefix: "https://sztry.page.link"
             link: "${link}"
@@ -54,7 +54,7 @@ export default async (req, res) => {
     `
     
     try {
-        const data = await graphQLClient.rawRequest(query)
+        const data = await graphQLClient.rawRequest(mutation)
         console.log(JSON.stringify(data))
         res.statusCode = 200
         res.json(data.data)
